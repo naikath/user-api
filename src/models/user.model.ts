@@ -1,9 +1,3 @@
-type User = {
-	id: string
-	username: string
-	password: string
-}
-
 let data: User[] = [
 	{
 		id: '1',
@@ -28,7 +22,7 @@ export class UserModel {
 		return user
 	}
 
-	setUser(queryData?: Partial<Omit<User, 'id'>>) {
+	setUser(queryData: UserQuery) {
 		if (!(queryData?.username && queryData?.password)) {
 			return false
 		}
@@ -36,7 +30,7 @@ export class UserModel {
 
 		const newUser = {
 			id,
-			...(queryData as Omit<User, 'id'>),
+			...(queryData as Required<UserQuery>),
 		}
 		data.push(newUser)
 		return true
