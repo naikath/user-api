@@ -5,3 +5,13 @@ export const userRouter = express.Router()
 const userController = new UserController()
 
 userRouter.get('/', userController.getAllUsers)
+
+userRouter.get('/:id', userController.getUserById)
+
+userRouter.post('/', userController.setUser)
+
+userRouter.delete('/:id', userController.deleteUserById)
+
+userRouter.use((_req, res) => {
+	res.send('Accessed Router')
+})
