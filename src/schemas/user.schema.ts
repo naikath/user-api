@@ -8,3 +8,5 @@ const userSchema = z.object({
 export function validateUserData(input: any) {
 	return userSchema.safeParse(input)
 }
+
+export type ParsedUserData = z.infer<typeof userSchema>
