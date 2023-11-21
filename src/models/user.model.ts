@@ -1,3 +1,5 @@
+import { validateUserData } from '../schemas/user.schema.js'
+
 let data: User[] = [
 	{
 		id: '1',
@@ -23,16 +25,21 @@ export class UserModel {
 	}
 
 	setUser(queryData: UserQuery) {
-		if (!(queryData?.username && queryData?.password)) {
+		const result = validateUserData(queryData)
+
+		if (!result.success) {
+			console.error(result.error.issues)
 			return false
 		}
+
 		id = (Number(id) + 1).toString()
 
 		const newUser = {
 			id,
-			...(queryData as Required<UserQuery>),
+			...result.data,
 		}
 		data.push(newUser)
+
 		return true
 	}
 
