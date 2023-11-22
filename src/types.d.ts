@@ -8,4 +8,4 @@ type User = {
 	password: string
 }
 
-type UserQuery = Prettify<Partial<Omit<User, 'id'>>>
+// type UserQuery = Prettify<Partial<Omit<User, 'id'>>>

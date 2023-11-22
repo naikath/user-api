@@ -1,3 +1,5 @@
+import type { ParsedUserData } from '../schemas/user.schema.js'
+
 let data: User[] = [
 	{
 		id: '1',
@@ -15,30 +17,25 @@ export class UserModel {
 		return data
 	}
 
-	getUserById(id?: string) {
-		if (!id) return false
+	getUserById(id: string) {
 		const user = data.find(user => user.id === id)
 		if (!user) return false
 		return user
 	}
 
-	setUser(queryData: UserQuery) {
-		if (!(queryData?.username && queryData?.password)) {
-			return false
-		}
+	setUser(userData: ParsedUserData) {
 		id = (Number(id) + 1).toString()
 
 		const newUser = {
 			id,
-			...(queryData as Required<UserQuery>),
+			...userData,
 		}
 		data.push(newUser)
+
 		return true
 	}
 
-	deleteUserById(id?: string) {
-		if (!id) return false
-
+	deleteUserById(id: string) {
 		let deletedUser = false
 
 		data = data.filter(user => {
