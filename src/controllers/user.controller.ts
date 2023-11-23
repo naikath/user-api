@@ -18,7 +18,7 @@ export class UserController {
 			return
 		}
 
-		const user = await userModel.getUserById(id)
+		const user = await userModel.getUserById(Number(id))
 		if (!user) {
 			res.status(404).send('User not found')
 			return
@@ -34,7 +34,13 @@ export class UserController {
 			return
 		}
 
-		res.send(await userModel.setUser(result.data))
+		const resultModel = await userModel.setUser(result.data)
+		if (!resultModel) {
+			res.status(500).send('Error while creating the user')
+			return
+		}
+
+		res.send('User created')
 	}
 
 	async deleteUserById(req: Request, res: Response) {
@@ -44,6 +50,12 @@ export class UserController {
 			return
 		}
 
-		res.send(await userModel.deleteUserById(id))
+		const resultModel = await userModel.deleteUserById(Number(id))
+		if (!resultModel) {
+			res.status(404).send('User not found')
+			return
+		}
+
+		res.send('User deleted')
 	}
 }
