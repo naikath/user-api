@@ -7,18 +7,18 @@ const userModel = new UserModel()
 export class UserController {
 	constructor() {}
 
-	getAllUsers(_req: Request, res: Response) {
-		res.send(userModel.getAllUsers())
+	async getAllUsers(_req: Request, res: Response) {
+		res.send(await userModel.getAllUsers())
 	}
 
-	getUserById(req: Request, res: Response) {
+	async getUserById(req: Request, res: Response) {
 		const { id } = req.params
 		if (!id) {
 			res.status(400).send('Id not provided')
 			return
 		}
 
-		const user = userModel.getUserById(id)
+		const user = await userModel.getUserById(id)
 		if (!user) {
 			res.status(404).send('User not found')
 			return
@@ -27,23 +27,23 @@ export class UserController {
 		res.send(user)
 	}
 
-	setUser(req: Request, res: Response) {
+	async setUser(req: Request, res: Response) {
 		const result = validateUserData(req.body)
 		if (!result.success) {
 			res.status(400).send(result.error.issues)
 			return
 		}
 
-		res.send(userModel.setUser(result.data))
+		res.send(await userModel.setUser(result.data))
 	}
 
-	deleteUserById(req: Request, res: Response) {
+	async deleteUserById(req: Request, res: Response) {
 		const { id } = req.params
 		if (!id) {
 			res.status(400).send('Id not provided')
 			return
 		}
 
-		res.send(userModel.deleteUserById(id))
+		res.send(await userModel.deleteUserById(id))
 	}
 }

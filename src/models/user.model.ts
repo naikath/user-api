@@ -1,4 +1,6 @@
 import type { ParsedUserData } from '../schemas/user.schema.js'
+import { db } from '../database/db.js'
+import { usersTable } from '../database/schema.js'
 
 let data: User[] = [
 	{
@@ -13,17 +15,17 @@ let id = '1'
 export class UserModel {
 	constructor() {}
 
-	getAllUsers() {
-		return data
+	async getAllUsers() {
+		return await db.select().from(usersTable)
 	}
 
-	getUserById(id: string) {
+	async getUserById(id: string) {
 		const user = data.find(user => user.id === id)
 		if (!user) return false
 		return user
 	}
 
-	setUser(userData: ParsedUserData) {
+	async setUser(userData: ParsedUserData) {
 		id = (Number(id) + 1).toString()
 
 		const newUser = {
@@ -35,7 +37,7 @@ export class UserModel {
 		return true
 	}
 
-	deleteUserById(id: string) {
+	async deleteUserById(id: string) {
 		let deletedUser = false
 
 		data = data.filter(user => {
