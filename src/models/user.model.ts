@@ -1,7 +1,7 @@
 import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
-import { genHashedPassword } from '../utils/password.js'
+import { comparePassword, genHashedPassword } from '../utils/password.js'
 
 export class UserModel {
 	constructor() {}
@@ -28,5 +28,19 @@ export class UserModel {
 		const result = await db.delete(usersTable).where(eq(usersTable.id, id))
 		if (result.changes === 0) return false
 		return true
+	}
+
+	async loginUser(userData: ParsedUserData) {
+		const { username, password } = userData
+
+		const [user] = await db
+			.select({ password: usersTable.password })
+			.from(usersTable)
+			.where(eq(usersTable.username, username))
+		if (!user) return { value: false, message: 'user not found' }
+
+		const isValidPassword = await comparePassword(password, user.password)
+		if (!isValidPassword) return { value: false, message: 'password not matched' }
+		return { value: true }
 	}
 }

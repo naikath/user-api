@@ -10,6 +10,8 @@ userRouter.get('/:id', userController.getUserById)
 
 userRouter.post('/', userController.setUser)
 
+userRouter.post('/login', userController.loginUser)
+
 userRouter.delete('/:id', userController.deleteUserById)
 
 userRouter.use((_req, res) => {
