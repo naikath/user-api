@@ -1,6 +1,5 @@
 import type { ParsedUserData } from '../schemas/user.schema.js'
-import { db } from '../database/db.js'
-import { usersTable } from '../database/schema.js'
+import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
 
 export class UserModel {

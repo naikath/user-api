@@ -7,3 +7,7 @@ const dbPath = fileURLToPath(new URL('../../drizzle/sqlite.db', import.meta.url)
 const betterSqlite = new Database(dbPath)
 
 export const db = drizzle(betterSqlite)
+
+// Re-exports
+export { usersTable } from './schema.js'
+export type { SelectUser, InsertUser } from './schema.js'
