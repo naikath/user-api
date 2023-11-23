@@ -19,7 +19,13 @@ export class UserModel {
 	async setUser(userData: ParsedUserData) {
 		const { username, password } = userData
 		const hashedPassword = await genHashedPassword(password)
-		const result = await db.insert(usersTable).values({ username, password: hashedPassword })
+		const result = await db
+			.insert(usersTable)
+			.values({ username, password: hashedPassword })
+			.catch(err => {
+				console.error('Error:', err?.code)
+				return { changes: 0 }
+			})
 		if (result.changes === 0) return false
 		return true
 	}
