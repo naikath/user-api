@@ -1,6 +1,7 @@
 import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
+import { genHashedPassword } from '../utils/password.js'
 
 export class UserModel {
 	constructor() {}
@@ -17,7 +18,8 @@ export class UserModel {
 
 	async setUser(userData: ParsedUserData) {
 		const { username, password } = userData
-		const result = await db.insert(usersTable).values({ username, password })
+		const hashedPassword = await genHashedPassword(password)
+		const result = await db.insert(usersTable).values({ username, password: hashedPassword })
 		if (result.changes === 0) return false
 		return true
 	}
