@@ -16,37 +16,52 @@ export class UserModel {
 		return user
 	}
 
-	async setUser(userData: ParsedUserData) {
+	async setUser(userData: ParsedUserData): ResultModel {
 		const { username, password } = userData
 		const hashedPassword = await genHashedPassword(password)
 		const result = await db
 			.insert(usersTable)
 			.values({ username, password: hashedPassword })
+			.then(value => {
+				if (value.changes === 0) {
+					return {
+						success: false,
+						error: 'other',
+					}
+				}
+
+				return { success: true } as const
+			})
 			.catch(err => {
 				console.error('Error:', err?.code)
-				return { changes: 0 }
+				return {
+					success: false,
+					error: 'user',
+				}
 			})
-		if (result.changes === 0) return false
-		return true
+
+		return result
 	}
 
-	async deleteUserById(id: number) {
+	async deleteUserById(id: number): ResultModel {
 		const result = await db.delete(usersTable).where(eq(usersTable.id, id))
-		if (result.changes === 0) return false
-		return true
+		if (result.changes === 0) return { success: false, error: 'user' }
+		return { success: true }
 	}
 
-	async loginUser(userData: ParsedUserData) {
+	async loginUser(userData: ParsedUserData): ResultModel {
 		const { username, password } = userData
 
 		const [user] = await db
 			.select({ password: usersTable.password })
 			.from(usersTable)
 			.where(eq(usersTable.username, username))
-		if (!user) return { value: false, message: 'user not found' }
+
+		if (!user) return { success: false, error: 'user' }
 
 		const isValidPassword = await comparePassword(password, user.password)
-		if (!isValidPassword) return { value: false, message: 'password not matched' }
-		return { value: true }
+		if (!isValidPassword) return { success: false, error: 'password' }
+
+		return { success: true }
 	}
 }

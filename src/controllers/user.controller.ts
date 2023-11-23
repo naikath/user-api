@@ -35,9 +35,17 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.setUser(result.data)
-		if (!resultModel) {
-			res.status(500).send('Error while creating the user')
-			return
+
+		if (!resultModel.success) {
+			if (resultModel.error === 'user') {
+				res.status(400).send('Error, user already exists')
+				return
+			}
+
+			if (resultModel.error === 'other') {
+				res.status(500).send('Unexpected error while creating the user')
+				return
+			}
 		}
 
 		res.send('User created')
@@ -51,9 +59,12 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.deleteUserById(Number(id))
-		if (!resultModel) {
-			res.status(404).send('User not found')
-			return
+
+		if (!resultModel.success) {
+			if (resultModel.error === 'user') {
+				res.status(404).send('User not found')
+				return
+			}
 		}
 
 		res.send('User deleted')
@@ -67,9 +78,17 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.loginUser(result.data)
-		if (!resultModel.value) {
-			res.status(404).send(`Login denied, ${resultModel.message}`)
-			return
+
+		if (!resultModel.success) {
+			if (resultModel.error === 'user') {
+				res.status(404).send(`Login denied, user not found`)
+				return
+			}
+
+			if (resultModel.error === 'password') {
+				res.status(400).send(`Login denied, password not matched`)
+				return
+			}
 		}
 
 		res.send('Login successful')
