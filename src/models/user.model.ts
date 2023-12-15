@@ -2,6 +2,7 @@ import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
 import { comparePassword, genHashedPassword } from '../utils/password.js'
+import type { ResultModel } from './user.model.types.js'
 
 export class UserModel {
 	constructor() {}
