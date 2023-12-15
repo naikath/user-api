@@ -2,7 +2,7 @@ import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
 import { comparePassword, genHashedPassword } from '../utils/password.js'
-import type { ResultModel, ResultObjectSuccess, ResultObjectError } from './user.model.types.js'
+import type { ResultObjectSuccess, ResultObjectError } from './user.model.types.js'
 
 class ModelSuccess implements ResultObjectSuccess {
 	success = true as const
@@ -37,7 +37,7 @@ export class UserModel {
 		return user
 	}
 
-	async setUser(userData: ParsedUserData): ResultModel {
+	async setUser(userData: ParsedUserData) {
 		const { username, password } = userData
 		const hashedPassword = await genHashedPassword(password)
 		const result = await db
@@ -58,7 +58,7 @@ export class UserModel {
 		return result
 	}
 
-	async deleteUserById(id: number): ResultModel {
+	async deleteUserById(id: number) {
 		const result = await db.delete(usersTable).where(eq(usersTable.id, id))
 		if (result.changes === 0) {
 			return new ModelError('user')
@@ -67,7 +67,7 @@ export class UserModel {
 		return new ModelSuccess()
 	}
 
-	async loginUser(userData: ParsedUserData): ResultModel {
+	async loginUser(userData: ParsedUserData) {
 		const { username, password } = userData
 
 		const [user] = await db
