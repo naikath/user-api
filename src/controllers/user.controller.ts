@@ -8,7 +8,9 @@ export class UserController {
 	constructor() {}
 
 	async getAllUsers(_req: Request, res: Response) {
-		res.send(await userModel.getAllUsers())
+		const resultModel = await userModel.getAllUsers()
+
+		res.send(resultModel.data)
 	}
 
 	async getUserById(req: Request, res: Response) {
@@ -18,13 +20,14 @@ export class UserController {
 			return
 		}
 
-		const user = await userModel.getUserById(Number(id))
-		if (!user) {
+		const resultModel = await userModel.getUserById(Number(id))
+
+		if (!resultModel.success) {
 			res.status(404).send('User not found')
 			return
 		}
 
-		res.send(user)
+		res.send(resultModel.data)
 	}
 
 	async setUser(req: Request, res: Response) {
@@ -35,8 +38,9 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.setUser(result.data)
-		if (!resultModel) {
-			res.status(500).send('Error while creating the user')
+
+		if (!resultModel.success) {
+			res.status(400).send('Error, user already exists')
 			return
 		}
 
@@ -51,7 +55,8 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.deleteUserById(Number(id))
-		if (!resultModel) {
+
+		if (!resultModel.success) {
 			res.status(404).send('User not found')
 			return
 		}
@@ -67,8 +72,9 @@ export class UserController {
 		}
 
 		const resultModel = await userModel.loginUser(result.data)
-		if (!resultModel.value) {
-			res.status(404).send(`Login denied, ${resultModel.message}`)
+
+		if (!resultModel.success) {
+			res.status(401).send(`Login denied, user or password not matched`)
 			return
 		}
 
