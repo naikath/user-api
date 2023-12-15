@@ -32,7 +32,7 @@ export const errorCodes = ['UNEXPECTED', 'USER_EXISTS', 'USER_NOT_EXISTS', 'LOGI
 
 export type ErrorCode = (typeof errorCodes)[number]
 
-export class ModelSuccess implements ResultObjectSuccess {
+export class ResultSuccess implements ResultObjectSuccess {
 	success = true as const
 	data: object | null = null
 
@@ -43,7 +43,7 @@ export class ModelSuccess implements ResultObjectSuccess {
 	}
 }
 
-export class ModelError implements ResultObjectError {
+export class ResultError implements ResultObjectError {
 	success = false as const
 	errorCode: ErrorCode = 'UNEXPECTED'
 
