@@ -2,6 +2,7 @@
 
 export type ResultObjectSuccess = {
 	success: true
+	data: object | null
 }
 
 export type ResultPromiseSuccess = Promise<ResultObjectSuccess>
