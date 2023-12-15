@@ -58,4 +58,20 @@ export class UserController {
 
 		res.send('User deleted')
 	}
+
+	async loginUser(req: Request, res: Response) {
+		const result = validateUserData(req.body)
+		if (!result.success) {
+			res.status(400).send(result.error.issues)
+			return
+		}
+
+		const resultModel = await userModel.loginUser(result.data)
+		if (!resultModel.value) {
+			res.status(404).send(`Login denied, ${resultModel.message}`)
+			return
+		}
+
+		res.send('Login successful')
+	}
 }
