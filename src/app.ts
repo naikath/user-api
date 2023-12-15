@@ -1,14 +1,19 @@
-import express from 'express'
+import Fastify from 'fastify'
 import { userRouter } from './routes/user.routes.js'
 
-const app = express()
+const fastify = Fastify({
+	// logger: true,
+	ignoreTrailingSlash: true,
+})
 
 const port = process.env.PORT ?? 3000
 
-app.use(express.json())
+fastify.register(userRouter)
 
-app.use('/', userRouter)
-
-app.listen(port, () => {
-	console.log(`Listening on ${port}`)
-})
+try {
+	console.log(`Listening on port ${port}`)
+	await fastify.listen({ port: 3000 })
+} catch (err) {
+	fastify.log.error(err)
+	process.exit(1)
+}
