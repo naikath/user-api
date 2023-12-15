@@ -40,22 +40,22 @@ export class UserModel {
 	async setUser(userData: ParsedUserData) {
 		const { username, password } = userData
 		const hashedPassword = await genHashedPassword(password)
-		const result = await db
-			.insert(usersTable)
-			.values({ username, password: hashedPassword })
-			.then(value => {
-				if (value.changes === 0) {
-					return new ModelError('other')
-				}
 
-				return new ModelSuccess()
-			})
-			.catch(err => {
-				console.error('Error:', err?.code, err?.message)
-				return new ModelError('user')
-			})
+		try {
+			const result = await db.insert(usersTable).values({ username, password: hashedPassword })
 
-		return result
+			if (result.changes === 0) {
+				return new ModelError('other')
+			}
+
+			return new ModelSuccess()
+		} catch (error) {
+			if (error instanceof Error) {
+				console.error('Error:', error.message)
+			}
+
+			return new ModelError('user')
+		}
 	}
 
 	async deleteUserById(id: number) {
