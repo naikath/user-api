@@ -10,7 +10,7 @@ export type ResultPromiseSuccess = Promise<ResultObjectSuccess>
 
 export type ResultObjectError = {
 	success: false
-	error: string
+	errorCode: ErrorCode
 }
 
 export type ResultPromiseError = Promise<ResultObjectError>
@@ -24,3 +24,9 @@ export type ResultPromiseCommon = Promise<ResultObjectCommon>
 // Model Result
 
 export type ResultModel = ResultPromiseCommon
+
+// Error Codes
+
+export const errorCodes = ['UNEXPECTED', 'USER_EXISTS', 'USER_NOT_EXISTS', 'LOGIN_INVALID'] as const
+
+export type ErrorCode = (typeof errorCodes)[number]
