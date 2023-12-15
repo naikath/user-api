@@ -80,13 +80,8 @@ export class UserController {
 		const resultModel = await userModel.loginUser(result.data)
 
 		if (!resultModel.success) {
-			if (resultModel.error === 'user') {
-				res.status(404).send(`Login denied, user not found`)
-				return
-			}
-
-			if (resultModel.error === 'password') {
-				res.status(400).send(`Login denied, password not matched`)
+			if (resultModel.error === 'user' || resultModel.error === 'password') {
+				res.status(401).send(`Login denied, user or password not matched`)
 				return
 			}
 		}
