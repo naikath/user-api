@@ -2,7 +2,24 @@ import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
 import { comparePassword, genHashedPassword } from '../utils/password.js'
-import type { ResultModel } from './user.model.types.js'
+import type { ResultModel, ResultObjectSuccess, ResultObjectError } from './user.model.types.js'
+
+class ModelSuccess implements ResultObjectSuccess {
+	success = true as const
+
+	constructor() {}
+}
+
+class ModelError implements ResultObjectError {
+	success = false as const
+	error = 'UNEXPECTED'
+
+	constructor(errorCode?: string) {
+		if (errorCode) {
+			this.error = errorCode
+		}
+	}
+}
 
 export class UserModel {
 	constructor() {}
@@ -13,7 +30,10 @@ export class UserModel {
 
 	async getUserById(id: number) {
 		const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id))
-		if (!user) return false
+		if (!user) {
+			return false
+		}
+
 		return user
 	}
 
@@ -25,20 +45,14 @@ export class UserModel {
 			.values({ username, password: hashedPassword })
 			.then(value => {
 				if (value.changes === 0) {
-					return {
-						success: false,
-						error: 'other',
-					}
+					return new ModelError('other')
 				}
 
-				return { success: true } as const
+				return new ModelSuccess()
 			})
 			.catch(err => {
-				console.error('Error:', err?.code)
-				return {
-					success: false,
-					error: 'user',
-				}
+				console.error('Error:', err?.code, err?.message)
+				return new ModelError('user')
 			})
 
 		return result
@@ -46,8 +60,11 @@ export class UserModel {
 
 	async deleteUserById(id: number): ResultModel {
 		const result = await db.delete(usersTable).where(eq(usersTable.id, id))
-		if (result.changes === 0) return { success: false, error: 'user' }
-		return { success: true }
+		if (result.changes === 0) {
+			return new ModelError('user')
+		}
+
+		return new ModelSuccess()
 	}
 
 	async loginUser(userData: ParsedUserData): ResultModel {
@@ -58,11 +75,15 @@ export class UserModel {
 			.from(usersTable)
 			.where(eq(usersTable.username, username))
 
-		if (!user) return { success: false, error: 'user' }
+		if (!user) {
+			return new ModelError('user')
+		}
 
 		const isValidPassword = await comparePassword(password, user.password)
-		if (!isValidPassword) return { success: false, error: 'password' }
+		if (!isValidPassword) {
+			return new ModelError('password')
+		}
 
-		return { success: true }
+		return new ModelSuccess()
 	}
 }
