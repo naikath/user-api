@@ -8,6 +8,7 @@
     "dev": "tsx watch ./src/app.ts",
     "start": "node ./dist/src/app.js",
     "build": "tsc",
+    "check": "tsc --noEmit",
     "generate": "drizzle-kit generate:sqlite",
     "migrate": "tsx ./src/database/migrate.ts",
     "generate:migrate": "drizzle-kit generate:sqlite && tsx ./src/database/migrate.ts"
