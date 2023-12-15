@@ -1,5 +1,5 @@
 import Fastify from 'fastify'
-// import { userRouter } from './routes/user.routes.js'
+import { userRouter } from './routes/user.routes.js'
 
 const fastify = Fastify({
 	// logger: true,
@@ -8,7 +8,7 @@ const fastify = Fastify({
 
 const port = process.env.PORT ?? 3000
 
-// app.use('/', userRouter)
+fastify.register(userRouter)
 
 try {
 	console.log(`Listening on port ${port}`)

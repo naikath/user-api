@@ -1,19 +1,20 @@
-import express from 'express'
 import { UserController } from '../controllers/user.controller.js'
 
-export const userRouter = express.Router()
-const userController = new UserController()
+export async function userRouter(instance: FInstance) {
+	const userController = new UserController()
 
-userRouter.get('/', userController.getAllUsers)
+	// instance.get('/', userController.getAllUsers)
 
-userRouter.get('/:id', userController.getUserById)
+	// instance.get('/:id', userController.getUserById)
 
-userRouter.post('/', userController.setUser)
+	// instance.post('/', userController.setUser)
 
-userRouter.post('/login', userController.loginUser)
+	// instance.post('/login', userController.loginUser)
 
-userRouter.delete('/:id', userController.deleteUserById)
+	// instance.delete('/:id', userController.deleteUserById)
 
-userRouter.use((_req, res) => {
-	res.send('Accessed Router')
-})
+	instance.all('*', async (_request: FRequest, reply: FReply) => {
+		console.log('Accessed router')
+		return reply.code(404).send('Route not found')
+	})
+}
