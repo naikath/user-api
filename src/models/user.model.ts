@@ -2,30 +2,7 @@ import type { ParsedUserData } from '../schemas/user.schema.js'
 import { db, usersTable } from '../database/db.js'
 import { eq } from 'drizzle-orm'
 import { comparePassword, genHashedPassword } from '../utils/password.js'
-import type { ResultObjectSuccess, ResultObjectError, ErrorCode } from './user.model.types.js'
-import { errorCodes } from './user.model.types.js'
-
-class ModelSuccess implements ResultObjectSuccess {
-	success = true as const
-	data: object | null = null
-
-	constructor(data?: unknown) {
-		if (data instanceof Object) {
-			this.data = data
-		}
-	}
-}
-
-class ModelError implements ResultObjectError {
-	success = false as const
-	errorCode: ErrorCode = 'UNEXPECTED'
-
-	constructor(errorCode?: ErrorCode) {
-		if (errorCode && errorCodes.includes(errorCode)) {
-			this.errorCode = errorCode
-		}
-	}
-}
+import { ModelSuccess, ModelError } from './user.model.types.js'
 
 export class UserModel {
 	constructor() {}
