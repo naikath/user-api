@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express'
 import { UserModel } from '../models/user.model.js'
 import { validateUserData } from '../schemas/user.schema.js'
 
@@ -7,77 +6,69 @@ const userModel = new UserModel()
 export class UserController {
 	constructor() {}
 
-	async getAllUsers(_req: Request, res: Response) {
+	async getAllUsers(_req: FRequest, reply: FReply) {
 		const resultModel = await userModel.getAllUsers()
 
-		res.send(resultModel.data)
+		return reply.send(resultModel.data)
 	}
 
-	async getUserById(req: Request, res: Response) {
-		const { id } = req.params
+	async getUserById(req: FRequest, reply: FReply) {
+		const { id } = req.params as { id?: string }
 		if (!id) {
-			res.status(400).send('Id not provided')
-			return
+			return reply.code(400).send('Id not provided')
 		}
 
 		const resultModel = await userModel.getUserById(Number(id))
 
 		if (!resultModel.success) {
-			res.status(404).send('User not found')
-			return
+			return reply.code(404).send('User not found')
 		}
 
-		res.send(resultModel.data)
+		return reply.send(resultModel.data)
 	}
 
-	async setUser(req: Request, res: Response) {
+	async setUser(req: FRequest, reply: FReply) {
 		const result = validateUserData(req.body)
 		if (!result.success) {
-			res.status(400).send(result.error.issues)
-			return
+			return reply.code(400).send(result.error.issues)
 		}
 
 		const resultModel = await userModel.setUser(result.data)
 
 		if (!resultModel.success) {
-			res.status(400).send('Error, user already exists')
-			return
+			return reply.code(400).send('Error, user already exists')
 		}
 
-		res.send('User created')
+		return reply.send('User created')
 	}
 
-	async deleteUserById(req: Request, res: Response) {
-		const { id } = req.params
+	async deleteUserById(req: FRequest, reply: FReply) {
+		const { id } = req.params as { id?: string }
 		if (!id) {
-			res.status(400).send('Id not provided')
-			return
+			return reply.code(400).send('Id not provided')
 		}
 
 		const resultModel = await userModel.deleteUserById(Number(id))
 
 		if (!resultModel.success) {
-			res.status(404).send('User not found')
-			return
+			return reply.code(404).send('User not found')
 		}
 
-		res.send('User deleted')
+		return reply.send('User deleted')
 	}
 
-	async loginUser(req: Request, res: Response) {
+	async loginUser(req: FRequest, reply: FReply) {
 		const result = validateUserData(req.body)
 		if (!result.success) {
-			res.status(400).send(result.error.issues)
-			return
+			return reply.code(400).send(result.error.issues)
 		}
 
 		const resultModel = await userModel.loginUser(result.data)
 
 		if (!resultModel.success) {
-			res.status(401).send(`Login denied, user or password not matched`)
-			return
+			return reply.code(401).send(`Login denied, user or password not matched`)
 		}
 
-		res.send('Login successful')
+		return reply.send('Login successful')
 	}
 }
