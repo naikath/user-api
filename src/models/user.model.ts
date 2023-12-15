@@ -7,8 +7,13 @@ import { errorCodes } from './user.model.types.js'
 
 class ModelSuccess implements ResultObjectSuccess {
 	success = true as const
+	data: object | null = null
 
-	constructor() {}
+	constructor(data?: unknown) {
+		if (data instanceof Object) {
+			this.data = data
+		}
+	}
 }
 
 class ModelError implements ResultObjectError {
@@ -26,16 +31,18 @@ export class UserModel {
 	constructor() {}
 
 	async getAllUsers() {
-		return await db.select().from(usersTable)
+		const users = await db.select().from(usersTable)
+
+		return new ModelSuccess(users)
 	}
 
 	async getUserById(id: number) {
 		const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id))
 		if (!user) {
-			return false
+			return new ModelError('USER_NOT_EXISTS')
 		}
 
-		return user
+		return new ModelSuccess(user)
 	}
 
 	async setUser(userData: ParsedUserData) {
