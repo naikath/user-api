@@ -34,6 +34,9 @@ devDependencies:
   tsx:
     specifier: 4.1.4
     version: 4.1.4
+  typescript:
+    specifier: ^5.3.2
+    version: 5.3.2
 
 packages:
 
@@ -2083,6 +2086,12 @@ packages:
 
   /type@2.7.2:
     resolution: {integrity: sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==}
+    dev: true
+
+  /typescript@5.3.2:
+    resolution: {integrity: sha512-6l+RyNy7oAHDfxC4FzSJcz9vnjTKxrLpDG5M2Vu4SHRVNg6xzqZp6LYSR9zjqQTu8DU/f5xwxUdADOkbrIX2gQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
     dev: true
 
   /undici-types@5.26.5:
